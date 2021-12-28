@@ -1,31 +1,18 @@
 pipeline {
     agent any
-
+    environment{
+        DOCKER_TAG = getDockerTag()
+    }
     stages {
-        stage('Hello') {
-            steps {
-                echo 'Hello World'
-            }
-        }
-        stage('Buid') {
-            steps {
-                echo 'Building'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing'
-            }
-        }
-        stage('Release') {
-            steps {
-                echo 'Releasing'
+        stage ('Build Docker Image'){
+            steps{
+                sh "docker build . -t chikeop/nodeapp:${DOCKER_TAG}"
             }
         }
     }
+}
+
+def getDockerTag(){
+    def tag  = sh script: 'git rev-parse HEAD', returnStdout: true
+    return tag
 }
